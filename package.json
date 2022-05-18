@@ -21,9 +21,12 @@
     "body-parser": "^1.20.0",
     "express": "^4.18.1",
     "mongoose": "^6.3.3",
-    "node-modules": "^1.0.1",
+    "node-modules": "^0.0.1",
     "nodemon": "^2.0.16",
+    "redirect": "^0.2.0",
+    "redis": "^3.1.2",
     "shortid": "^2.2.16",
+    "util": "^0.12.4",
     "valid-url": "^1.0.9"
   }
 }
