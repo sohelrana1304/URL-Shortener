@@ -49,7 +49,7 @@ const shortUrl = async function (req, res) {
         const baseUrl = 'http://localhost:3000'
 
         // URL validation
-        if (!urlValidator.isUri(data.longUrl)) {
+        if (!urlValidator.isWebUri(data.longUrl)) {
             return res.status(400).send({ status: false, msg: "Not a valid URL" })
         }
 
@@ -57,7 +57,7 @@ const shortUrl = async function (req, res) {
         let cacheUrlParse = JSON.parse(cacheUrl)
 
         if (cacheUrl) {
-            return res.status(302).send({message:"Cached URL", data: cacheUrlParse })
+            return res.status(302).send({ message: "Cached URL", data: cacheUrlParse })
         } else {
             // Finding the inputted longUrl from db
             let findURL = await urlModel.findOne({ longUrl: data.longUrl }).select({ _id: 0, createdAt: 0, updatedAt: 0, __v: 0 });
@@ -77,8 +77,6 @@ const shortUrl = async function (req, res) {
 
                 // Creating a new URL document
                 let createShortURL = await urlModel.create(data)
-
-                // await SET_ASYNC(`${data.longUrl}`, JSON.stringify(createShortURL))
 
                 if (createShortURL) {
                     let responseData = await urlModel.findOne({ _id: createShortURL })
@@ -110,22 +108,19 @@ const redirectURL = async function (req, res) {
         let cacheUrlParse = JSON.parse(cacheUrl)
 
         if (cacheUrl) {
-            return res.redirect(cacheUrlParse)
-            // return res.send(201).send({message:"Cached URL", cacheUrlParse})
+            return res.status(302).redirect(cacheUrlParse)
         } else {
             // Finding the URL document in db, with the inputted urlCode
-            let findLongURL = await urlModel.findOne({ urlCode: data })
+            let findLongURL = await urlModel.findOne({urlCode: data })
 
             if (findLongURL) {
-                // res.status(302).redirect(findLongURL.longUrl )
                 await SET_ASYNC(`${data}`, JSON.stringify(findLongURL.longUrl))
 
                 // Redirecting the longUrl in response
-                return res.redirect(findLongURL.longUrl)
+                return res.status(302).redirect(findLongURL.longUrl)
 
-                // return res.send(200).send({message:"New URL", findLongURL})
             } else {
-                return res.status(404).send({ message: "No URL Found" })
+                return res.status(404).send({status: false, message: "No URL Found" })
             }
         }
 
